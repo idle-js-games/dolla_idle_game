@@ -40,15 +40,20 @@ window.onload=function(){
 var gold = 2;
 var business = ["Food", "Telecom", "Games", "Transport", "Energy", "Politics", "Weapons", "Drugs", "Space Travel", "Time Travel", "Universe Creation", "Multiverse Travel", "Multiverse Weapons", "God Business Stuff", "Much WOW", "Hi reddit"];
 var businessAmount = new Array();
+var show_hide_buttons=false;
 
 //this is called every second to recalculate everythng
 function update() {
   for(i = 0; i < business.length; i++) {
     gold += businessAmount[i] * ((i + 1) * (i + 1));
+    //if(gold>50)  document.getElementById(i).style.display = 'none';//DEBUG jon -this hides ALL buttons
+    //if(gold>=businessCost(i))  document.getElementById(i).style.display = 'none';//DEBUG jon
+    if (show_hide_buttons) if(gold >= businessCost(i))  document.getElementById(i).style.display = 'inline';//DEBUG jon
+    if (show_hide_buttons) console.log("BusinessCost " + i + "=" +businessCost(i));
   }
   
   goldTxt.innerHTML = gold;
-}
+} // END of function update() {
 
 //parse array and create elements in Webpage
 function setBusiness() {
@@ -69,7 +74,8 @@ function setBusiness() {
     
     var button = document.createElement('input');
     button.type = "button";
-    button.id = i;
+    button.id =  i;//ORIG line
+    //button.id = "btnbuyid" + i;
     button.value = 'buy'
     button.onclick = buyBusiness;
     
@@ -77,17 +83,20 @@ function setBusiness() {
     div.appendChild(cost);
     div.appendChild(button);
     main.appendChild(div);
+
+    if (show_hide_buttons) document.getElementById(i).style.display = 'none';//hide all buttons at start
   }
 }
 
 function buyBusiness() {
-console.log("BUY " + this.id)
+///console.log("BUY " + this.id)
   if(gold >= businessCost(this.id)) {
     gold -= businessCost(this.id);
     businessAmount[this.id]++;
     document.getElementById("amount" + this.id).innerHTML = businessAmount[this.id];
   }
-  
+ //alert(businessCost(this.id));
+  //document.getElementById("cost" + this.id).innerHTML = "$" + businessCost(this.id); //ORIG
   document.getElementById("cost" + this.id).innerHTML = "$" + businessCost(this.id);
 }
 
@@ -96,9 +105,11 @@ function businessCost(id) {
   return (id + 2) * (id + 1) * (id + 1) * (businessAmount[id] + 1);
 }
 
+
 setBusiness();
 for(i = 0 ; i < business.length; i++) {
-   document.getElementById(i).onclick();
+   document.getElementById(i).onclick(); //ORIG line
+   //document.getElementById("btnbuyid" + i).onclick();
 }
 
 setInterval(update, 1000/15);
